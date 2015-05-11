@@ -1,0 +1,38 @@
+CREATE EXTERNAL TABLE `newData`(                                                         
+    `key` int,                                                                    
+    `value` int)                                                            
+  ROW FORMAT DELIMITED                                                                                                     
+    FIELDS TERMINATED BY ' '                                                                        
+  STORED AS INPUTFORMAT                                                                                                
+    'org.apache.hadoop.mapred.TextInputFormat'                                                                  
+  OUTPUTFORMAT                                                                                                         
+    'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'                         
+  LOCATION                                                                               
+    'hdfs://server1.ctolab.hortonworks.com:8020/user/orenault/table2'   
+
+CREATE TABLE `table2` (
+    `value` int)
+  partitioned by (key int) 
+  stored as ORC tblproperties ("orc.compress"="SNAPPY");
+
+
+FROM newData
+INSERT OVERWRITE TABLE table2 PARTITION(key)
+    SELECT newData.key, newData.value;
+
+
+# BUCKET TABLE
+DROP TABLE IF EXISTS `table4`;
+CREATE TABLE `table4` (
+    `key` int,
+    `value` int)
+    CLUSTERED BY (key)
+    INTO 200 BUCKETS
+    STORED AS ORC tblproperties ("orc.compress"="SNAPPY");
+
+INSERT OVERWRITE TABLE `table4` select * from newData;
+
+CREATE TABLE `results` STORED AS ORC tblproperties ("orc.compress"="SNAPPY") AS 
+select refdata.key as key, refdata.value as value1, newdata.value as value2
+from refData 
+LEFT OUTER JOIN newData ON refData.key = newData.key;

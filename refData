@@ -1,0 +1,35 @@
+CREATE EXTERNAL TABLE `refData`(                                                         
+    `key` int,                                                                    
+    `value` int)                                                            
+  ROW FORMAT DELIMITED                                                                                                     
+    FIELDS TERMINATED BY ' '                                                                        
+  STORED AS INPUTFORMAT                                                                                                
+    'org.apache.hadoop.mapred.TextInputFormat'                                                                  
+  OUTPUTFORMAT                                                                                                         
+    'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'                         
+  LOCATION                                                                               
+    'hdfs://server1.ctolab.hortonworks.com:8020/user/orenault/table1';
+
+
+# PARTITION TABLE
+CREATE TABLE `table1` (
+    `value` int)
+    partitioned by (key int) 
+    stored as ORC tblproperties ("orc.compress"="SNAPPY");
+
+INSERT OVERWRITE TABLE `table1` select * from refData; # fctionne pas
+
+FROM refData
+INSERT OVERWRITE TABLE table1 PARTITION(key)
+    SELECT refData.key, refData.value;
+
+# BUCKET TABLE
+DROP TABLE IF EXISTS `table3`;
+CREATE TABLE `table3` (
+    `key` int,
+    `value` int)
+    CLUSTERED BY (key)
+    INTO 200 BUCKETS
+    STORED AS ORC tblproperties ("orc.compress"="SNAPPY");
+
+INSERT OVERWRITE TABLE `table3` select * from refData;
