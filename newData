@@ -1,6 +1,16 @@
-CREATE EXTERNAL TABLE `newData`(                                                         
-    `key` int,                                                                    
-    `value` int)                                                            
+CREATE EXTERNAL TABLE `new`(                                                         
+    `key` int,                                                                     
+    `att5` string, `att6` string, `att7` string, `att8` string, 
+    `amount17` int, `amount18` int, `amount19` int,
+    `amount20` int, `amount21` int, `amount22` int, `amount23` int, `amount24` int, `amount25` int, `amount26` int, `amount27` int, `amount28` int, `amount29` int,
+    `att10` int, `att11` int, `att12` int, `att13` int, `att14` int, `att15` int, `att16` int, `att17` int, `att18` int, `att19` int,
+    `att20` int, `att21` int, `att22` int, `att23` int, `att24` int, `att25` int, `att26` int, `att27` int, `att28` int, `att29` int,
+    `att30` int, `att31` int, `att32` int, `att33` int, `att34` int, `att35` int, `att36` int, `att37` int, `att38` int, `att39` int,
+    `att40` int, `att41` int, `att42` int, `att43` int, `att44` int, `att45` int, `att46` int, `att47` int, `att48` int, `att49` int,
+    `att50` int, `att51` int, `att52` int, `att53` int, `att54` int, `att55` int, `att56` int, `att57` int, `att58` int, `att59` int,
+    `att60` int, `att61` int, `att62` int, `att63` int, `att64` int, `att65` int, `att66` int, `att67` int, `att68` int, `att69` int,
+    `att70` int, `att71` int, `att72` int, `att73` int, `att74` int, `att75` int, `att76` int
+    )                                                            
   ROW FORMAT DELIMITED                                                                                                     
     FIELDS TERMINATED BY ' '                                                                        
   STORED AS INPUTFORMAT                                                                                                
@@ -8,7 +18,15 @@ CREATE EXTERNAL TABLE `newData`(
   OUTPUTFORMAT                                                                                                         
     'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'                         
   LOCATION                                                                               
-    'hdfs://server1.ctolab.hortonworks.com:8020/user/orenault/table2'   
+    'hdfs://server1.ctolab.hortonworks.com:8020/user/orenault/newdata'   
+
+key                     long  8 8
+Att5 thru Att8          string  8 32
+refOrcSnappy.amount17 thru refOrcSnappy.amount36  double  8 160
+Att10 thru Att76        string  20  1300
+
+
+
 
 CREATE TABLE `table2` (
     `value` int)
@@ -21,18 +39,69 @@ INSERT OVERWRITE TABLE table2 PARTITION(key)
     SELECT newData.key, newData.value;
 
 
-# BUCKET TABLE
-DROP TABLE IF EXISTS `table4`;
-CREATE TABLE `table4` (
-    `key` int,
-    `value` int)
+# BUCKET TABLE SNAPPY
+DROP TABLE IF EXISTS `newOrcSnappy`;
+CREATE TABLE `newOrcSnappy` (
+    `key` int,                                                                     
+    `att5` string, `att6` string, `att7` string, `att8` string, 
+    `amount17` int, `amount18` int, `amount19` int, `amount20` int, `amount21` int, `amount22` int, `amount23` int, `amount24` int, `amount25` int, `amount26` int, `amount27` int, `amount28` int, `amount29` int,
+    `att10` int, `att11` int, `att12` int, `att13` int, `att14` int, `att15` int, `att16` int, `att17` int, `att18` int, `att19` int,
+    `att20` int, `att21` int, `att22` int, `att23` int, `att24` int, `att25` int, `att26` int, `att27` int, `att28` int, `att29` int,
+    `att30` int, `att31` int, `att32` int, `att33` int, `att34` int, `att35` int, `att36` int, `att37` int, `att38` int, `att39` int,
+    `att40` int, `att41` int, `att42` int, `att43` int, `att44` int, `att45` int, `att46` int, `att47` int, `att48` int, `att49` int,
+    `att50` int, `att51` int, `att52` int, `att53` int, `att54` int, `att55` int, `att56` int, `att57` int, `att58` int, `att59` int,
+    `att60` int, `att61` int, `att62` int, `att63` int, `att64` int, `att65` int, `att66` int, `att67` int, `att68` int, `att69` int,
+    `att70` int, `att71` int, `att72` int, `att73` int, `att74` int, `att75` int, `att76` int
     CLUSTERED BY (key)
     INTO 200 BUCKETS
     STORED AS ORC tblproperties ("orc.compress"="SNAPPY");
 
-INSERT OVERWRITE TABLE `table4` select * from newData;
+INSERT OVERWRITE TABLE `newOrcSnappy` select * from new;
 
-CREATE TABLE `results` STORED AS ORC tblproperties ("orc.compress"="SNAPPY") AS 
-select refdata.key as key, refdata.value as value1, newdata.value as value2
-from refData 
-LEFT OUTER JOIN newData ON refData.key = newData.key;
+# BUCKET TABLE ZLIB
+DROP TABLE IF EXISTS `newOrc`;
+CREATE TABLE `newOrc` (
+    `key` int,                                                                     
+    `att5` string, `att6` string, `att7` string, `att8` string, 
+    `amount17` int, `amount18` int, `amount19` int, `amount20` int, `amount21` int, `amount22` int, `amount23` int, `amount24` int, `amount25` int, `amount26` int, `amount27` int, `amount28` int, `amount29` int,
+    `att10` int, `att11` int, `att12` int, `att13` int, `att14` int, `att15` int, `att16` int, `att17` int, `att18` int, `att19` int,
+    `att20` int, `att21` int, `att22` int, `att23` int, `att24` int, `att25` int, `att26` int, `att27` int, `att28` int, `att29` int,
+    `att30` int, `att31` int, `att32` int, `att33` int, `att34` int, `att35` int, `att36` int, `att37` int, `att38` int, `att39` int,
+    `att40` int, `att41` int, `att42` int, `att43` int, `att44` int, `att45` int, `att46` int, `att47` int, `att48` int, `att49` int,
+    `att50` int, `att51` int, `att52` int, `att53` int, `att54` int, `att55` int, `att56` int, `att57` int, `att58` int, `att59` int,
+    `att60` int, `att61` int, `att62` int, `att63` int, `att64` int, `att65` int, `att66` int, `att67` int, `att68` int, `att69` int,
+    `att70` int, `att71` int, `att72` int, `att73` int, `att74` int, `att75` int, `att76` int
+    CLUSTERED BY (key)
+    INTO 200 BUCKETS
+    STORED AS ORC;
+
+INSERT OVERWRITE TABLE `newOrc` select * from new;
+
+
+CREATE TABLE `resultsSnappy` STORED AS ORC tblproperties ("orc.compress"="SNAPPY") AS 
+  select refOrcSnappy.key as key,
+  refOrcSnappy.att1, refOrcSnappy.att2, refOrcSnappy.att3, refOrcSnappy.att4,
+  refOrcSnappy.count1, refOrcSnappy.count2, refOrcSnappy.count3, refOrcSnappy.count4, refOrcSnappy.count5, refOrcSnappy.count6, refOrcSnappy.count7, refOrcSnappy.count8, refOrcSnappy.count9, refOrcSnappy.count10, refOrcSnappy.count11, refOrcSnappy.count12, refOrcSnappy.count13, refOrcSnappy.count14, refOrcSnappy.count15, refOrcSnappy.count16,
+  refOrcSnappy.amount1 , refOrcSnappy.amount2 , refOrcSnappy.amount3 , refOrcSnappy.amount4 , refOrcSnappy.amount5 , refOrcSnappy.amount6 , refOrcSnappy.amount7 , refOrcSnappy.amount8 , refOrcSnappy.amount9 , refOrcSnappy.amount10 , refOrcSnappy.amount11 , refOrcSnappy.amount12 , refOrcSnappy.amount13 , refOrcSnappy.amount14 , refOrcSnappy.amount15 , refOrcSnappy.amount16,
+  newOrcSnappy.att5, newOrcSnappy.att6, newOrcSnappy.att7, newOrcSnappy.att8,
+  newOrcSnappy.amount17, newOrcSnappy.amount18, newOrcSnappy.amount19, newOrcSnappy.amount20, newOrcSnappy.amount21, newOrcSnappy.amount22, newOrcSnappy.amount23, newOrcSnappy.amount24, newOrcSnappy.amount25, newOrcSnappy.amount26, newOrcSnappy.amount27, newOrcSnappy.amount28, newOrcSnappy.amount29, newOrcSnappy.amount30, newOrcSnappy.amount31, newOrcSnappy.amount32, newOrcSnappy.amount33, newOrcSnappy.amount34, newOrcSnappy.amount35, newOrcSnappy.amount36,
+  newOrcSnappy.att10, newOrcSnappy.att11, newOrcSnappy.att12, newOrcSnappy.att13, newOrcSnappy.att14, newOrcSnappy.att15, newOrcSnappy.att16, newOrcSnappy.att17, newOrcSnappy.att18, newOrcSnappy.att19,
+  newOrcSnappy.att20, newOrcSnappy.att21, newOrcSnappy.att22, newOrcSnappy.att23, newOrcSnappy.att24, newOrcSnappy.att25, newOrcSnappy.att26, newOrcSnappy.att27, newOrcSnappy.att28, newOrcSnappy.att29,
+  newOrcSnappy.att30, newOrcSnappy.att31, newOrcSnappy.att32, newOrcSnappy.att33, newOrcSnappy.att34, newOrcSnappy.att35, newOrcSnappy.att36, newOrcSnappy.att37, newOrcSnappy.att38, newOrcSnappy.att39,
+  newOrcSnappy.att40, newOrcSnappy.att41, newOrcSnappy.att42, newOrcSnappy.att43, newOrcSnappy.att44, newOrcSnappy.att45, newOrcSnappy.att46, newOrcSnappy.att47, newOrcSnappy.att48, newOrcSnappy.att49,
+  newOrcSnappy.att50, newOrcSnappy.att51, newOrcSnappy.att52, newOrcSnappy.att53, newOrcSnappy.att54, newOrcSnappy.att55, newOrcSnappy.att56, newOrcSnappy.att57, newOrcSnappy.att58, newOrcSnappy.att59,
+  newOrcSnappy.att60, newOrcSnappy.att61, newOrcSnappy.att62, newOrcSnappy.att63, newOrcSnappy.att64, newOrcSnappy.att65, newOrcSnappy.att66, newOrcSnappy.att67, newOrcSnappy.att68, newOrcSnappy.att69,
+  newOrcSnappy.att70, newOrcSnappy.att71, newOrcSnappy.att72, newOrcSnappy.att73, newOrcSnappy.att74
+from refOrcSnappy 
+LEFT OUTER JOIN newOrcSnappy ON refOrcSnappy.key = newOrcSnappy.key;
+
+
+key                     long    8 8
+Att1 thru Att4          string  8 32
+Count1 thru Count16     integer 2 32
+amount1 thru amount16   double  8 128
+Att5 thru Att8          string  8 32
+amount17 thru amount36  double  8 160
+Att10 thru Att74        string  20  1300
+
+

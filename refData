@@ -1,6 +1,10 @@
-CREATE EXTERNAL TABLE `refData`(                                                         
+CREATE EXTERNAL TABLE `ref`(                                                         
     `key` int,                                                                    
-    `value` int)                                                            
+    `att1` string, `att2` string, `att3` string, `att4` string,
+    `count1` int, `count2` int, `count3` int, `count4` int, `count5` int, `count6` int, `count7` int, `count8` int, `count9` int, `count10` int,
+    `count11` int, `count12` int, `count13` int, `count14` int, `count15` int, `count16` int,
+    `amount1` int, `amount2` int, `amount3` int, `amount4` int, `amount5` int, `amount6` int, `amount7` int, `amount8` int, `amount9` int, `amount10` int, `amount11` int, `amount12` int, `amount13` int, `amount14` int, `amount15` int, `amount16` int
+    )                                                            
   ROW FORMAT DELIMITED                                                                                                     
     FIELDS TERMINATED BY ' '                                                                        
   STORED AS INPUTFORMAT                                                                                                
@@ -8,7 +12,14 @@ CREATE EXTERNAL TABLE `refData`(
   OUTPUTFORMAT                                                                                                         
     'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'                         
   LOCATION                                                                               
-    'hdfs://server1.ctolab.hortonworks.com:8020/user/orenault/table1';
+    'hdfs://server1.ctolab.hortonworks.com:8020/user/orenault/refdata';
+
+
+Key                     long 8 8
+Att1 thru Att4          string 8 32
+Count1 thru Count16     integer 2 32
+Amount1 thru Amount16   double  8 128
+
 
 
 # PARTITION TABLE
@@ -24,12 +35,29 @@ INSERT OVERWRITE TABLE table1 PARTITION(key)
     SELECT refData.key, refData.value;
 
 # BUCKET TABLE
-DROP TABLE IF EXISTS `table3`;
-CREATE TABLE `table3` (
-    `key` int,
-    `value` int)
+DROP TABLE IF EXISTS `refOrcSnappy`;
+CREATE TABLE `refOrcSnappy` (
+    `key` int,                                                                    
+    `att1` string, `att2` string, `att3` string, `att4` string,
+    `count1` int, `count2` int, `count3` int, `count4` int, `count5` int, `count6` int, `count7` int, `count8` int, `count9` int, `count10` int,
+    `count11` int, `count12` int, `count13` int, `count14` int, `count15` int, `count16` int,
+    `amount1` int, `amount2` int, `amount3` int, `amount4` int, `amount5` int, `amount6` int, `amount7` int, `amount8` int, `amount9` int, `amount10` int, `amount11` int, `amount12` int, `amount13` int, `amount14` int, `amount15` int, `amount16` int
     CLUSTERED BY (key)
     INTO 200 BUCKETS
     STORED AS ORC tblproperties ("orc.compress"="SNAPPY");
 
-INSERT OVERWRITE TABLE `table3` select * from refData;
+INSERT OVERWRITE TABLE `refOrcSnappy` select * from ref;
+
+# BUCKET TABLE
+DROP TABLE IF EXISTS `refOrcZlib`;
+CREATE TABLE `refOrcSnappy` (
+    `key` int,                                                                    
+    `att1` string, `att2` string, `att3` string, `att4` string,
+    `count1` int, `count2` int, `count3` int, `count4` int, `count5` int, `count6` int, `count7` int, `count8` int, `count9` int, `count10` int,
+    `count11` int, `count12` int, `count13` int, `count14` int, `count15` int, `count16` int,
+    `amount1` int, `amount2` int, `amount3` int, `amount4` int, `amount5` int, `amount6` int, `amount7` int, `amount8` int, `amount9` int, `amount10` int, `amount11` int, `amount12` int, `amount13` int, `amount14` int, `amount15` int, `amount16` int
+    CLUSTERED BY (key)
+    INTO 200 BUCKETS
+    STORED AS ORC;
+
+INSERT OVERWRITE TABLE `refOrcZlib` select * from ref;
