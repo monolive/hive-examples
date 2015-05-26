@@ -6,7 +6,7 @@ CREATE EXTERNAL TABLE `ref`(
     `amount1` int, `amount2` int, `amount3` int, `amount4` int, `amount5` int, `amount6` int, `amount7` int, `amount8` int, `amount9` int, `amount10` int, `amount11` int, `amount12` int, `amount13` int, `amount14` int, `amount15` int, `amount16` int
     )                                                            
   ROW FORMAT DELIMITED                                                                                                     
-    FIELDS TERMINATED BY ' '                                                                        
+    FIELDS TERMINATED BY ','                                                                        
   STORED AS INPUTFORMAT                                                                                                
     'org.apache.hadoop.mapred.TextInputFormat'                                                                  
   OUTPUTFORMAT                                                                                                         
@@ -41,7 +41,7 @@ CREATE TABLE `refOrcSnappy` (
     `att1` string, `att2` string, `att3` string, `att4` string,
     `count1` int, `count2` int, `count3` int, `count4` int, `count5` int, `count6` int, `count7` int, `count8` int, `count9` int, `count10` int,
     `count11` int, `count12` int, `count13` int, `count14` int, `count15` int, `count16` int,
-    `amount1` int, `amount2` int, `amount3` int, `amount4` int, `amount5` int, `amount6` int, `amount7` int, `amount8` int, `amount9` int, `amount10` int, `amount11` int, `amount12` int, `amount13` int, `amount14` int, `amount15` int, `amount16` int
+    `amount1` int, `amount2` int, `amount3` int, `amount4` int, `amount5` int, `amount6` int, `amount7` int, `amount8` int, `amount9` int, `amount10` int, `amount11` int, `amount12` int, `amount13` int, `amount14` int, `amount15` int, `amount16` int)
     CLUSTERED BY (key)
     INTO 200 BUCKETS
     STORED AS ORC tblproperties ("orc.compress"="SNAPPY");
@@ -50,12 +50,12 @@ INSERT OVERWRITE TABLE `refOrcSnappy` select * from ref;
 
 # BUCKET TABLE
 DROP TABLE IF EXISTS `refOrcZlib`;
-CREATE TABLE `refOrcSnappy` (
+CREATE TABLE `refOrcZlib` (
     `key` int,                                                                    
     `att1` string, `att2` string, `att3` string, `att4` string,
     `count1` int, `count2` int, `count3` int, `count4` int, `count5` int, `count6` int, `count7` int, `count8` int, `count9` int, `count10` int,
     `count11` int, `count12` int, `count13` int, `count14` int, `count15` int, `count16` int,
-    `amount1` int, `amount2` int, `amount3` int, `amount4` int, `amount5` int, `amount6` int, `amount7` int, `amount8` int, `amount9` int, `amount10` int, `amount11` int, `amount12` int, `amount13` int, `amount14` int, `amount15` int, `amount16` int
+    `amount1` int, `amount2` int, `amount3` int, `amount4` int, `amount5` int, `amount6` int, `amount7` int, `amount8` int, `amount9` int, `amount10` int, `amount11` int, `amount12` int, `amount13` int, `amount14` int, `amount15` int, `amount16` int )
     CLUSTERED BY (key)
     INTO 200 BUCKETS
     STORED AS ORC;
